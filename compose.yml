@@ -1,7 +1,21 @@
-version: "3.9"
-
 services:
-  app:
-    build: .
+  # app:
+  #   build: .
+  #   ports:
+  #     - "9000:9000"
+
+ db:
+    image: postgres:16
+    container_name: mygo-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: mygo-todo
+      POSTGRES_PASSWORD: mygo-todo
+      POSTGRES_DB: mydb
     ports:
-      - "9000:9000"
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
