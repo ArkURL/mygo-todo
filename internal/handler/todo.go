@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/arkurl/mygo-todo/internal/response"
 	"github.com/arkurl/mygo-todo/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,7 @@ func NewTodoHandler(service service.TodoService) *TodoHandler {
 }
 
 type CreateTodoRequest struct {
-	Title   string `json:"title"`
+	Title   string `json:"title" binding:"required"`
 	Content string `json:"content"`
 }
 
@@ -25,76 +26,65 @@ func (h *TodoHandler) Create(c *gin.Context) {
 	var req CreateTodoRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid request body",
-		})
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "invalid request")
 		return
 	}
 
-	todo, err := h.service.Create(c.Request.Context(), service.CreateTodoInput{
+	_, err := h.service.Create(c.Request.Context(), service.CreateTodoInput{
 		Title:   req.Title,
 		Content: req.Content,
 	})
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusInternalServerError, response.CodeInternalError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, todo)
+	response.Created(c, gin.H{})
 }
 
 func (h *TodoHandler) List(c *gin.Context) {
 	todos, err := h.service.List((c.Request.Context()))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusInternalServerError, response.CodeInternalError, "internal error")
 		return
 	}
 
-	c.JSON(http.StatusOK, todos)
+	response.Success(c, gin.H{
+		"todos": todos,
+	})
 }
 
 func (h *TodoHandler) GetById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid todo id",
-		})
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "invalid request")
 		return
 	}
 
 	todo, err := h.service.GetById(c.Request.Context(), id)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusInternalServerError, response.CodeInternalError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, todo)
-
+	response.Success(c, gin.H{
+		"todo": todo,
+	})
 }
 
 func (h *TodoHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "invalid request")
 		return
 	}
 
 	if err := h.service.Delete(c.Request.Context(), id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		response.Error(c, http.StatusInternalServerError, response.CodeInternalError, err.Error())
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	response.Success(c, gin.H{})
 }
