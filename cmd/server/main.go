@@ -11,6 +11,7 @@ import (
 	"github.com/arkurl/mygo-todo/internal/repository"
 	"github.com/arkurl/mygo-todo/internal/router"
 	"github.com/arkurl/mygo-todo/internal/service"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -25,12 +26,12 @@ func main() {
 	db, err := database.NewPostgres(config.Conf.Database.DSN())
 
 	if err != nil {
-		log.Fatal(err)
+		logger.L().Fatal("connect database failed", zap.Error(err))
 	}
 	defer database.Close(db)
 
 	if err := db.AutoMigrate(&model.Todo{}); err != nil {
-		log.Fatal(err)
+		logger.L().Fatal("migrate database failed", zap.Error(err))
 	}
 
 	todoRepo := repository.NewTodoRepository(db)
@@ -40,7 +41,7 @@ func main() {
 	r := router.New(todoHandler)
 
 	if err := r.Run(config.Conf.Server.PORT()); err != nil {
-		log.Fatal(err)
+		logger.L().Fatal("server stopped with error", zap.Error(err))
 	}
 
 }
