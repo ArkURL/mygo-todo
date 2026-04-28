@@ -6,6 +6,7 @@ import (
 	"github.com/arkurl/mygo-todo/internal/config"
 	"github.com/arkurl/mygo-todo/internal/database"
 	"github.com/arkurl/mygo-todo/internal/handler"
+	"github.com/arkurl/mygo-todo/internal/logger"
 	"github.com/arkurl/mygo-todo/internal/model"
 	"github.com/arkurl/mygo-todo/internal/repository"
 	"github.com/arkurl/mygo-todo/internal/router"
@@ -14,6 +15,12 @@ import (
 
 func main() {
 	config.Init()
+
+	if err := logger.Init(); err != nil {
+		log.Fatal(err)
+	}
+
+	defer logger.Sync()
 
 	db, err := database.NewPostgres(config.Conf.Database.DSN())
 
