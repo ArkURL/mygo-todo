@@ -17,11 +17,6 @@ func NewTodoHandler(service service.TodoService) *TodoHandler {
 	return &TodoHandler{service: service}
 }
 
-type CreateTodoRequest struct {
-	Title   string `json:"title" binding:"required"`
-	Content string `json:"content"`
-}
-
 func (h *TodoHandler) Create(c *gin.Context) {
 	var req CreateTodoRequest
 
