@@ -31,6 +31,7 @@ func main() {
 	todoHandler := handler.NewTodoHandler(todoService)
 
 	r := router.New(todoHandler)
+
 	if err := r.Run(config.Conf.Server.PORT()); err != nil {
 		log.Fatal(err)
 	}
