@@ -1,33 +1,38 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/arkurl/mygo-todo/internal/config"
-	"github.com/gin-gonic/gin"
+	"github.com/arkurl/mygo-todo/internal/database"
+	"github.com/arkurl/mygo-todo/internal/handler"
+	"github.com/arkurl/mygo-todo/internal/model"
+	"github.com/arkurl/mygo-todo/internal/repository"
+	"github.com/arkurl/mygo-todo/internal/router"
+	"github.com/arkurl/mygo-todo/internal/service"
 )
 
 func main() {
 	config.Init()
 
-	r := gin.Default()
+	db, err := database.NewPostgres(config.Conf.Database.DSN())
 
-	r.GET("ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer database.Close(db)
 
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]string{
-			"name": "liao",
-		})
-	})
+	if err := db.AutoMigrate(&model.Todo{}); err != nil {
+		log.Fatal(err)
+	}
 
-	addr := fmt.Sprintf(":%d", config.Conf.Server.Port)
+	todoRepo := repository.NewTodoRepository(db)
+	todoService := service.NewTodoService(todoRepo)
+	todoHandler := handler.NewTodoHandler(todoService)
 
-	if err := r.Run(addr); err != nil {
-		log.Fatalf("run server error: %v", err)
+	r := router.New(todoHandler)
+	if err := r.Run(config.Conf.Server.PORT()); err != nil {
+		log.Fatal(err)
 	}
 
 }
