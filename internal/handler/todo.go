@@ -100,5 +100,10 @@ func (h *TodoHandler) Update(c *gin.Context) {
 		Done:    req.Done,
 	})
 
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, response.CodeInternalError, err.Error())
+		return
+	}
+
 	response.Success(c, nil)
 }
