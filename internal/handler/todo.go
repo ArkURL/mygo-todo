@@ -45,7 +45,7 @@ func (h *TodoHandler) List(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, todos)
+	response.Success(c, ToTodoResponses(todos))
 }
 
 func (h *TodoHandler) GetById(c *gin.Context) {
@@ -62,7 +62,7 @@ func (h *TodoHandler) GetById(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, todo)
+	response.Success(c, ToTodoResponse(todo))
 }
 
 func (h *TodoHandler) Delete(c *gin.Context) {
