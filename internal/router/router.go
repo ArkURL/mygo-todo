@@ -20,4 +20,5 @@ func RegisterTodoRoutes(r gin.IRouter, h *handler.TodoHandler) {
 	todos.GET("", h.List)
 	todos.GET("/:id", h.GetById)
 	todos.DELETE("/:id", h.Delete)
+	todos.PATCH("/:id", h.Update)
 }

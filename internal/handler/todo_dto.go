@@ -30,3 +30,9 @@ func ToTodoResponses(todos []model.Todo) []TodoResponse {
 	}
 	return items
 }
+
+type UpdateTodoRequest struct {
+	Title   *string `json:"title"`
+	Content *string `json:"content"`
+	Done    *bool   `json:"done"`
+}

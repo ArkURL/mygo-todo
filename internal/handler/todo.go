@@ -79,3 +79,26 @@ func (h *TodoHandler) Delete(c *gin.Context) {
 
 	response.Success(c, gin.H{})
 }
+
+func (h *TodoHandler) Update(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "invalid request")
+		return
+	}
+
+	var req UpdateTodoRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "invalid request")
+		return
+	}
+
+	_, err = h.service.Update(c.Request.Context(), id, service.UpdateTodoInput{
+		Title:   req.Title,
+		Content: req.Content,
+		Done:    req.Done,
+	})
+
+	response.Success(c, nil)
+}
