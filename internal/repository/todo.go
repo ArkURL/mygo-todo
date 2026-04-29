@@ -38,7 +38,7 @@ func (r *todoRepository) GetById(ctx context.Context, id int) (*model.Todo, erro
 
 func (r *todoRepository) List(ctx context.Context) ([]model.Todo, error) {
 	var todos []model.Todo
-	if err := r.db.WithContext(ctx).Order("id desc").Find(&todos).Error; err != nil {
+	if err := r.db.WithContext(ctx).Order("id").Find(&todos).Error; err != nil {
 		return nil, err
 	}
 
