@@ -35,7 +35,7 @@ func (h *TodoHandler) Create(c *gin.Context) {
 		return
 	}
 
-	response.Created(c, gin.H{})
+	response.Created(c, nil)
 }
 
 func (h *TodoHandler) List(c *gin.Context) {
@@ -45,9 +45,7 @@ func (h *TodoHandler) List(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, gin.H{
-		"todos": todos,
-	})
+	response.Success(c, todos)
 }
 
 func (h *TodoHandler) GetById(c *gin.Context) {
@@ -64,9 +62,7 @@ func (h *TodoHandler) GetById(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, gin.H{
-		"todo": todo,
-	})
+	response.Success(c, todo)
 }
 
 func (h *TodoHandler) Delete(c *gin.Context) {
