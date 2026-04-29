@@ -7,7 +7,6 @@ import (
 	"github.com/arkurl/mygo-todo/internal/database"
 	"github.com/arkurl/mygo-todo/internal/handler"
 	"github.com/arkurl/mygo-todo/internal/logger"
-	"github.com/arkurl/mygo-todo/internal/model"
 	"github.com/arkurl/mygo-todo/internal/repository"
 	"github.com/arkurl/mygo-todo/internal/router"
 	"github.com/arkurl/mygo-todo/internal/service"
@@ -30,7 +29,7 @@ func main() {
 	}
 	defer database.Close(db)
 
-	if err := db.AutoMigrate(&model.Todo{}); err != nil {
+	if err := database.Migrate(db); err != nil {
 		logger.L().Fatal("migrate database failed", zap.Error(err))
 	}
 

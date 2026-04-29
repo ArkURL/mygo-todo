@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/arkurl/mygo-todo/internal/config"
+	"github.com/arkurl/mygo-todo/internal/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -32,4 +33,8 @@ func Close(db *gorm.DB) error {
 	}
 
 	return sqlDB.Close()
+}
+
+func Migrate(db *gorm.DB) error {
+	return db.AutoMigrate(&model.Todo{})
 }
