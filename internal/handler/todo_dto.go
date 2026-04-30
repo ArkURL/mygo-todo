@@ -1,6 +1,10 @@
 package handler
 
-import "github.com/arkurl/mygo-todo/internal/model"
+import (
+	"time"
+
+	"github.com/arkurl/mygo-todo/internal/model"
+)
 
 type CreateTodoRequest struct {
 	Title   string `json:"title" binding:"required"`
@@ -8,18 +12,22 @@ type CreateTodoRequest struct {
 }
 
 type TodoResponse struct {
-	ID      uint   `json:"id"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Done    bool   `json:"done"`
+	ID        uint      `json:"id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	Done      bool      `json:"done"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func ToTodoResponse(todo *model.Todo) TodoResponse {
 	return TodoResponse{
-		ID:      todo.ID,
-		Title:   todo.Title,
-		Content: todo.Content,
-		Done:    todo.Done,
+		ID:        todo.ID,
+		Title:     todo.Title,
+		Content:   todo.Content,
+		Done:      todo.Done,
+		CreatedAt: todo.CreatedAt,
+		UpdatedAt: todo.UpdatedAt,
 	}
 }
 
