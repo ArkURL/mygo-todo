@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewPostgres(dsn string) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func NewPostgres(cfg config.DatabaseConfig) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{})
 
 	if err != nil {
 		return nil, err
@@ -19,9 +19,9 @@ func NewPostgres(dsn string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	sqlDB.SetMaxIdleConns(config.Conf.Database.MaxIdleConns)
-	sqlDB.SetMaxOpenConns(config.Conf.Database.MaxOpenConns)
-	sqlDB.SetConnMaxLifetime(config.Conf.Database.MaxLifeTime)
+	sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+	sqlDB.SetConnMaxLifetime(cfg.MaxLifeTime)
 
 	return db, nil
 }

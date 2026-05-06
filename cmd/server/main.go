@@ -22,7 +22,7 @@ func main() {
 
 	defer logger.Sync()
 
-	db, err := database.NewPostgres(config.Conf.Database.DSN())
+	db, err := database.NewPostgres(config.Conf.Database)
 
 	if err != nil {
 		logger.L().Fatal("connect database failed", zap.Error(err))
